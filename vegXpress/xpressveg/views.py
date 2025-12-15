@@ -31,6 +31,11 @@ class UserRegistrationview(APIView):
                     error_response(message="Email Already Exists", errors="Email Already Exists"),
                     status=status.HTTP_400_BAD_REQUEST
                 )
+            if models.CustomUser.objects.filter(mobile=mobile).exists(): #added by kiran
+                return Response(
+                    error_response(message="mobile Already Exists. Try another Mobile Number", errors="Mobile Already Exists"),
+                    status=status.HTTP_400_BAD_REQUEST
+                )
             
             password = validated_data.pop("password")
             user_obj = models.CustomUser.objects.create(
