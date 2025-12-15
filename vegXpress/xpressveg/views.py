@@ -222,132 +222,132 @@ class ProductCreate(APIView):
             )
 
 
-# class order(APIView):
-#     permission_classes = [IsAuthenticated]
-#     authentication_classes = [JWTAuthentication]
+class order(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
 
-#     def get(self, request):
-#         try:
-#             obj = models.Order.objects.all()
-#             serializer = OrderSerializer(obj,many=True)
+    def get(self, request):
+        try:
+            obj = models.Order.objects.all()
+            serializer = OrderSerializer(obj,many=True)
             
 
-#             return Response(
-#                 success_response(
-#                     message="orders fetched successfully",
-#                     data=serializer.data
-#                 ),
-#                 status=status.HTTP_200_OK
-#             )
+            return Response(
+                success_response(
+                    message="orders fetched successfully",
+                    data=serializer.data
+                ),
+                status=status.HTTP_200_OK
+            )
 
-#         except Exception as e:
-#             return Response(
-#                 error_response(
-#                     message="Something went wrong",
-#                     errors=str(e)
-#                 ),
-#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
-#             )  
-#     def post(self, request):
-#         validator = validators.OrderValidators(data=request.data)
+        except Exception as e:
+            return Response(
+                error_response(
+                    message="Something went wrong",
+                    errors=str(e)
+                ),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )  
+    def post(self, request):
+        validator = validators.OrderValidators(data=request.data)
 
-#         if not validator.is_valid():
-#              return Response(
-#                 error_response(message="Invalid Data", errors=validator.errors),
-#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
-#             )
+        if not validator.is_valid():
+             return Response(
+                error_response(message="Invalid Data", errors=validator.errors),
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
-#         customer = CustomUser.objects.get(id=validator.validated_data['customer'])
-#         seller = CustomUser.objects.get(id=validator.validated_data['buyer'])
-#         products_data = validator.validated_data['items']
+        customer = CustomUser.objects.get(id=validator.validated_data['customer'])
+        seller = CustomUser.objects.get(id=validator.validated_data['buyer'])
+        products_data = validator.validated_data['items']
 
-#         order = models.Order.objects.create(customer=customer, seller=seller)
+        order = models.Order.objects.create(customer=customer, seller=seller)
 
-#         total_price = 0
+        total_price = 0
 
-#         for p in products_data:
-#             product = models.Product.objects.get(id=p['item'])
-#             qty = int(p['quantity'])
+        for p in products_data:
+            product = models.Product.objects.get(id=p['item'])
+            qty = int(p['quantity'])
 
-#             models.OrderItem.objects.create(
-#                 order=order,
-#                 product=product,
-#                 quantity=qty,
-#                 total_amount=product.price*qty
-#             )
+            models.OrderItem.objects.create(
+                order=order,
+                product=product,
+                quantity=qty,
+                total_amount=product.price*qty
+            )
 
-#             total_price += product.price * qty
+            total_price += product.price * qty
 
-#         order.total_amount = total_price
-#         order.save()
+        order.total_amount = total_price
+        order.save()
 
-#         return Response(
-#             success_response(
-#                 data={
-#                     "order_id": str(order.id),
-#                     "customer": str(customer.username),
-#                     "seller": str(seller.username),
-#                     "products": products_data,
-#                     "total_price": total_price
-#                 },
-#                 message="Order created successfully"
-#             ),
-#             status=status.HTTP_201_CREATED
-#         )
-# class productupdate(APIView):
-#     def put(self,request,id):
-#         obj = models.Product.objects.get(id=id)
-#         validator = validators.ProductCreateValidator(data=request.data)
-#         if validator.is_valid():
-#             validator_data = validator.validated_data
-#             for key,value in validator_data.items():
-#                 setattr(obj,key,value)
-#             obj.save()
+        return Response(
+            success_response(
+                data={
+                    "order_id": str(order.id),
+                    "customer": str(customer.username),
+                    "seller": str(seller.username),
+                    "products": products_data,
+                    "total_price": total_price
+                },
+                message="Order created successfully"
+            ),
+            status=status.HTTP_201_CREATED
+        )
+class productupdate(APIView):
+    def put(self,request,id):
+        obj = models.Product.objects.get(id=id)
+        validator = validators.ProductCreateValidator(data=request.data)
+        if validator.is_valid():
+            validator_data = validator.validated_data
+            for key,value in validator_data.items():
+                setattr(obj,key,value)
+            obj.save()
             
-#             return Response(
-#                 success_response(
-#                     message="Products updated successfully",
-#                     data=validator_data
-#                 ),
-#                 status=status.HTTP_200_OK
-#             )
-#         raise SerializerError(validator.errors)
-#     def patch(self,request,id):
-#         obj = models.Product.objects.get(id=id)
-#         validator = validators.ProductCreateValidator(data=request.data,partial=True)
-#         if validator.is_valid():
-#             validator_data = validator.validated_data
-#             obj.stock+=validator_data['stock']
-#             obj.save()
+            return Response(
+                success_response(
+                    message="Products updated successfully",
+                    data=validator_data
+                ),
+                status=status.HTTP_200_OK
+            )
+        raise SerializerError(validator.errors)
+    def patch(self,request,id):
+        obj = models.Product.objects.get(id=id)
+        validator = validators.ProductCreateValidator(data=request.data,partial=True)
+        if validator.is_valid():
+            validator_data = validator.validated_data
+            obj.stock+=validator_data['stock']
+            obj.save()
 
-#             return Response(
-#                 success_response(
-#                     message="stock updated successfully",
-#                     data=validator_data
-#                 ),
-#                 status=status.HTTP_200_OK
-#             )
-#         raise SerializerError(validator.error)
+            return Response(
+                success_response(
+                    message="stock updated successfully",
+                    data=validator_data
+                ),
+                status=status.HTTP_200_OK
+            )
+        raise SerializerError(validator.error)
     
-# class deleteorder(APIView):
-#     authentication_classes = [JWTAuthentication]
-#     permission_classes = [IsAuthenticated]
+class deleteorder(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
-#     def delete(self,request,id):
-#         try:
-#             obj = models.Order.objects.get(id=id)
-#         except models.Order.DoesNotExist:
-#             return Response(error_response(message="orderobjectnotfound",error="invalid_id"))
-#         if request.user == obj.customer:
-#             orderitem = models.OrderItem.objects.filter(order=id)
-#             orderitem.delete()
-#             obj.delete()
-#             return Response(
-#                 success_response(
-#                     message="order deleted successfully",
-#                     data="orderdeleted"
-#                 ),
-#                 status=status.HTTP_200_OK
-#             )
-#         return Response(error_response(message="invalid user",errors="authentication error")) 
+    def delete(self,request,id):
+        try:
+            obj = models.Order.objects.get(id=id)
+        except models.Order.DoesNotExist:
+            return Response(error_response(message="orderobjectnotfound",error="invalid_id"))
+        if request.user == obj.customer:
+            orderitem = models.OrderItem.objects.filter(order=id)
+            orderitem.delete()
+            obj.delete()
+            return Response(
+                success_response(
+                    message="order deleted successfully",
+                    data="orderdeleted"
+                ),
+                status=status.HTTP_200_OK
+            )
+        return Response(error_response(message="invalid user",errors="authentication error")) 
