@@ -10,6 +10,7 @@ def email_validator(value):
     email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(email_pattern, value):
         raise ValidationError("Enter a valid Email Format.")
+    return value
      
 
 def validate_password(password):
@@ -61,7 +62,7 @@ class LoginValidators(serializers.Serializer):
     email = serializers.CharField(required = True, allow_blank = False,allow_null= False,error_messages = {
         'NULL':'email name could not allow null value',
         'Blank': 'email name could not allow blank',
-        'required':'email name required'},validators=[email_validator])
+        'required':'email name required'},validators=[email_validator]) 
     
 
     password = serializers.CharField(required=True, allow_null=False, allow_blank=False, min_length=8, error_messages={
@@ -72,7 +73,10 @@ class LoginValidators(serializers.Serializer):
  
 
 class ProductCreateValidator(serializers.Serializer):
-    name = serializers.CharField(required = True)
+    name = serializers.CharField(required = True, allow_blank = False,allow_null= False,error_messages = {
+        'NULL':' name could not allow null value',
+        'Blank': ' name could not allow blank',
+        'required':' name required'},) # added by kiran
     price = serializers.DecimalField(max_digits=10,decimal_places=2,required = False)
     stock = serializers.IntegerField(required = False)
     product_image = serializers.ImageField(required = False)
@@ -80,7 +84,10 @@ class ProductCreateValidator(serializers.Serializer):
     
 
 class orderitemsvalidators(serializers.Serializer):
-    item = serializers.CharField(required= True)
+    item = serializers.CharField(required = True, allow_blank = False,allow_null= False,error_messages = {
+        'NULL':' item could not allow null value',
+        'Blank': ' item could not allow blank',
+        'required':'  reqitemuired'},)# edited by kiran
     quantity = serializers.DecimalField(max_digits=10,decimal_places=2, default=1.0)
 
 
